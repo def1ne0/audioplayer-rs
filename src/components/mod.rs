@@ -1,5 +1,6 @@
 mod player_buttons;
 mod load_image;
+mod audio_player;
 
 use load_image::load_image;
 use player_buttons::{ PlayButton, NextButton, PreviousButton };

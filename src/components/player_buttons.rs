@@ -1,10 +1,29 @@
+use std::sync::Arc;
+use crate::components::audio_player::{AudioPlayer, AudioPlayerState, MusicState};
 use dioxus::prelude::*;
 
 #[component]
 pub fn PlayButton() -> Element {
+    let player = Arc::new(AudioPlayer::try_new().expect("xyila"));
+
+    let mut audio_state = AudioPlayerState {
+        player,
+        state: MusicState::Stopped,
+    };
+
     rsx! {
         button {
             class: "player-buttons",
+
+            onclick: move |_| {
+                if audio_state.state == MusicState::Playing {
+                    audio_state.player.pause();
+                    audio_state.state = MusicState::Stopped;
+                } else {
+                    audio_state.player.play("assets/swag.mp3");
+                    audio_state.state = MusicState::Playing;
+                }
+            },
 
             svg {
                 xmlns: "http://www.w3.org/2000/svg",

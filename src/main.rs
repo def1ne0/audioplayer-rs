@@ -12,7 +12,7 @@ fn main() {
                     .with_title("audioplayer")
             )
         )
-        .launch(App)
+        .launch(App);
 }
 
 
