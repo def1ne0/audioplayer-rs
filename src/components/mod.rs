@@ -26,7 +26,7 @@ pub fn App() -> Element {
                     style: "padding: 10px 20px; margin-bottom: 20px; cursor: pointer;",
                     "Выбрать картинку"
                 }
-            }
+            },
 
             div {
                 class: "player-menu",
@@ -50,12 +50,13 @@ pub fn App() -> Element {
                     max: "100",
                     value: "0",
                     step: "1",
-                }
+                    disabled: true,
+                },
 
                 p {
                     class: "music-title",
                     "0. Title"
-                }
+                },
 
                 div {
                     class: "player-buttons-div",
