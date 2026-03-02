@@ -3,6 +3,7 @@ use base64::{engine::general_purpose, Engine as _};
 use rfd::AsyncFileDialog;
 use std::fs;
 
+#[allow(unused)]
 pub fn load_image(mut image_src: Signal<String>) -> impl FnMut(MouseEvent) + 'static {
     move |_| {
         spawn(async move {

@@ -19,6 +19,8 @@
     width: 30vw;
     height: 100vh;
     justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 
 .player-menu {
@@ -55,7 +57,9 @@
     padding: 0;
 }
 
-.music-title {
-    font-size: 28px;
-    font-family: "Arial Black", serif;
+
+.track-item {
+    background-color: white;
+    padding: 5px;
+    border-radius: 10px;
 }

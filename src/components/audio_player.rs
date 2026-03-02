@@ -1,9 +1,8 @@
 use std::fs::File;
 use std::io::BufReader;
-use std::sync::Arc;
 use rodio::{Decoder, OutputStream, Sink};
 
-#[derive(Eq, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum MusicState {
     Playing,
     Stopped,
@@ -12,11 +11,13 @@ pub enum MusicState {
 pub struct AudioPlayer {
     _stream: OutputStream,
     sink: Sink,
+
 }
 
-pub struct AudioPlayerState {
-    pub player: Arc<AudioPlayer>,
-    pub state: MusicState,
+#[derive(Clone, PartialEq, Eq)]
+pub struct Track {
+    pub path: std::path::PathBuf,
+    pub name: String,
 }
 
 impl AudioPlayer {
@@ -27,10 +28,10 @@ impl AudioPlayer {
         Some(Self { _stream, sink })
     }
 
-    pub fn play(&self, path: &str) {
+    pub fn play(&self, curr_path: &str) {
         self.sink.stop();
 
-        if let Ok(file) = File::open(path) {
+        if let Ok(file) = File::open(curr_path) {
             if let Ok(source) = Decoder::new(BufReader::new(file)) {
                 self.sink.append(source);
                 self.sink.play();

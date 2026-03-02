@@ -1,10 +1,14 @@
 mod player_buttons;
 mod load_image;
 mod audio_player;
+mod load_directory;
+mod track_list;
 
-use load_image::load_image;
-use player_buttons::{ PlayButton, NextButton, PreviousButton };
+use std::sync::Arc;
+use player_buttons::{PlayButton, NextButton, PreviousButton };
 use dioxus::prelude::*;
+use crate::components::audio_player::{Track, MusicState, AudioPlayer};
+use crate::components::track_list::TrackList;
 
 const MAIN_CSS: &'static str = include_str!("../../assets/main.css");
 
@@ -12,20 +16,45 @@ const MAIN_CSS: &'static str = include_str!("../../assets/main.css");
 pub fn App() -> Element {
     let image_src = use_signal(|| String::new());
 
+    let player = Arc::new(AudioPlayer::try_new().expect("xyila"));
+
+    let tracks = use_signal(|| Vec::<Track>::new());
+    let mut current_track = use_signal(|| Option::<Track>::None);
+    let mut track_state = use_signal(|| MusicState::Stopped);
+
+    let handle_track_select = move |track: Track| {
+        current_track.set(Some(track.clone()));
+        track_state.set(MusicState::Stopped);
+    };
+
+    let handle_play = {
+        let player = player.clone();
+
+        move |path: String| {
+            player.play(&path);
+        }
+    };
+
+    let handle_pause = {
+        let player = player.clone();
+
+        move |_| {
+
+            player.pause();
+        }
+
+    };
+
     rsx! {
         document::Style{ { MAIN_CSS } },
 
         div {
             class: "main",
 
-            div {
-                class: "music-list",
-
-                button {
-                    onclick: load_image(image_src),
-                    style: "padding: 10px 20px; margin-bottom: 20px; cursor: pointer;",
-                    "Выбрать картинку"
-                }
+            TrackList {
+                tracks,
+                selected_track: current_track,
+                on_select: handle_track_select,
             },
 
             div {
@@ -62,7 +91,7 @@ pub fn App() -> Element {
                     class: "player-buttons-div",
 
                     PreviousButton {},
-                    PlayButton {},
+                    PlayButton { current_track, track_state, handle_play, handle_pause },
                     NextButton {},
                 },
             }

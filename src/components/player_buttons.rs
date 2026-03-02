@@ -1,29 +1,39 @@
-use std::sync::Arc;
-use crate::components::audio_player::{AudioPlayer, AudioPlayerState, MusicState};
+use crate::components::audio_player::{MusicState, Track};
 use dioxus::prelude::*;
 
 #[component]
-pub fn PlayButton() -> Element {
-    let player = Arc::new(AudioPlayer::try_new().expect("xyila"));
+pub fn PlayButton(
+    mut track_state: Signal<MusicState>,
+    mut current_track: Signal<Option<Track>>,
+    handle_play: EventHandler<String>,
+    handle_pause: EventHandler<()>,
+) -> Element {
 
-    let mut audio_state = AudioPlayerState {
-        player,
-        state: MusicState::Stopped,
+
+    let toggle_play = move |_| {
+        let current_state = *track_state.read();
+
+        match current_state {
+            MusicState::Playing => {
+                handle_pause(());
+                track_state.set(MusicState::Stopped);
+            },
+            MusicState::Stopped => {
+                if let Some(track) = current_track.read().clone() {
+                    if let Some(path) = track.path.to_str() {
+                        handle_play(path.to_string());
+                        track_state.set(MusicState::Playing);
+                    }
+                }
+            }
+        }
     };
 
     rsx! {
         button {
             class: "player-buttons",
 
-            onclick: move |_| {
-                if audio_state.state == MusicState::Playing {
-                    audio_state.player.pause();
-                    audio_state.state = MusicState::Stopped;
-                } else {
-                    audio_state.player.play("assets/swag.mp3");
-                    audio_state.state = MusicState::Playing;
-                }
-            },
+            onclick: toggle_play,
 
             svg {
                 xmlns: "http://www.w3.org/2000/svg",
