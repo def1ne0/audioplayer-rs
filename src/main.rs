@@ -1,6 +1,9 @@
-mod components;
+#![feature(fn_traits)]
 
-use dioxus::desktop::{ Config, WindowBuilder };
+mod components;
+mod utilities;
+
+use dioxus::desktop::{Config, WindowBuilder };
 use components::App;
 
 fn main() {
@@ -10,6 +13,7 @@ fn main() {
                 WindowBuilder::default()
                     .with_decorations(false)
                     .with_title("audioplayer")
+
             )
         )
         .launch(App);

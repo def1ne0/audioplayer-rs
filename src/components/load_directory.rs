@@ -22,7 +22,7 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
                            .extension()
                            .and_then(|e| e.to_str())
                        {
-                           if ["mp3"].contains(&ext.to_lowercase().as_str()) {
+                           if ["mp3", "flac", "wav", "vorbis"].contains(&ext.to_lowercase().as_str()) {
                                let name = path
                                    .file_stem()
                                    .and_then(|s| s.to_str())

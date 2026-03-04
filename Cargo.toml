@@ -11,6 +11,7 @@ dioxus = { git = "https://github.com/DioxusLabs/dioxus", branch = "main" }
 rfd = "0.17.2"
 base64 = "0.22.1"
 rodio = { version = "0.18.0", features = ["symphonia-all"] }
+tokio = "1.49.0"
 
 [features]
 default = ["desktop"]

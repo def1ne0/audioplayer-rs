@@ -8,8 +8,6 @@ pub fn PlayButton(
     handle_play: EventHandler<String>,
     handle_pause: EventHandler<()>,
 ) -> Element {
-
-
     let toggle_play = move |_| {
         let current_state = *track_state.read();
 
@@ -51,10 +49,13 @@ pub fn PlayButton(
 }
 
 #[component]
-pub fn NextButton() -> Element {
+pub fn NextButton(
+    handle_next: EventHandler<()>,
+) -> Element {
     rsx! {
         button {
             class: "player-buttons",
+            onclick: move |_| handle_next(()),
 
             svg {
                 xmlns: "http://www.w3.org/2000/svg",
@@ -72,10 +73,13 @@ pub fn NextButton() -> Element {
 }
 
 #[component]
-pub fn PreviousButton() -> Element {
+pub fn PreviousButton(
+    handle_prev: EventHandler<()>,
+) -> Element {
     rsx! {
         button {
             class: "player-buttons",
+            onclick: move |_| handle_prev(()),
 
             svg {
                 xmlns: "http://www.w3.org/2000/svg",

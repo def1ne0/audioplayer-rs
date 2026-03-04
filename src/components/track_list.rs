@@ -8,9 +8,6 @@ pub fn TrackList(
     selected_track: Signal<Option<Track>>,
     on_select: EventHandler<Track>,
 ) -> Element {
-
-    let tracks_vec: Vec<Track> = tracks.read().iter().cloned().collect();
-
     rsx! {
         div {
             class: "music-list",
@@ -24,9 +21,12 @@ pub fn TrackList(
                     }
                 }
             } else {
-                for track in tracks_vec {
+                for (i, track) in tracks.read().iter().cloned().enumerate() {
                     TrackItem {
-                        track: track.clone(),
+                        track: Track {
+                            name: format!("{}. {}", i + 1, &track.name),
+                            path: track.path.clone()
+                        },
                         is_selected: selected_track.read().as_ref()
                             .map(|t| t.path == track.path)
                             .unwrap_or(false),
@@ -45,10 +45,10 @@ pub fn TrackItem(
     on_select: EventHandler<Track>,
 ) -> Element {
     rsx! {
-        div {
+        div  {
             class: "track-item",
             onclick: move |_| on_select.call(track.clone()),
-            span { class: "track-name", "{track.name}" }
+            p { "{track.name}" },
         }
     }
 }

@@ -1,5 +1,8 @@
 use std::fs::File;
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::io::BufReader;
+use dioxus::prelude::{ReadableExt, Signal, WritableExt};
 use rodio::{Decoder, OutputStream, Sink};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -10,7 +13,8 @@ pub enum MusicState {
 
 pub struct AudioPlayer {
     _stream: OutputStream,
-    sink: Sink,
+    sink: Arc<Mutex<Sink>>,
+    on_track_end: Option<Signal<usize>>,
 
 }
 
@@ -22,24 +26,55 @@ pub struct Track {
 
 impl AudioPlayer {
     #[inline]
-    pub fn try_new() -> Option<Self> {
+    pub fn try_new(signal: Signal<usize>) -> Option<Self> {
         let (_stream, stream_handle) = OutputStream::try_default().ok()?;
         let sink = Sink::try_new(&stream_handle).ok()?;
-        Some(Self { _stream, sink })
+        Some(Self {
+            _stream,
+            sink:
+            Arc::new(Mutex::new(sink)),
+            on_track_end: Some(signal),
+        })
     }
 
     pub fn play(&self, curr_path: &str) {
-        self.sink.stop();
+        let sink_lock = self.sink.clone();
+        let signal_opt = self.on_track_end.clone();
+
+        if let Ok(sink) = sink_lock.lock() {
+            sink.stop();
+        }
 
         if let Ok(file) = File::open(curr_path) {
             if let Ok(source) = Decoder::new(BufReader::new(file)) {
-                self.sink.append(source);
-                self.sink.play();
+                if let Ok(sink) = self.sink.lock() {
+                    sink.append(source);
+                    sink.play();
+                }
             }
         }
+
+        dioxus::prelude::spawn(async move {
+            loop {
+                tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+
+                if let Ok(sink) = sink_lock.lock() {
+                    if sink.empty() {
+                        if let Some(mut signal) = signal_opt {
+                            let val = *signal.read();
+                            signal.set(val + 1);
+                        }
+
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     pub fn pause(&self) {
-        self.sink.pause();
+        if let Ok(sink) = self.sink.lock() {
+            sink.pause();
+        }
     }
 }
