@@ -12,6 +12,7 @@ rfd = "0.17.2"
 base64 = "0.22.1"
 rodio = { version = "0.18.0", features = ["symphonia-all"] }
 tokio = "1.49.0"
+id3 = "1.16.4"
 
 [features]
 default = ["desktop"]

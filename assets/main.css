@@ -24,16 +24,7 @@
     padding: 5px;
 }
 
-.player-menu {
-    background-image: radial-gradient(#45423a, #312e26, #222120);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
-    width: 70vw;
-    height: 100vh;
-}
+
 
 .player-buttons-div {
     display: flex;
@@ -44,6 +35,17 @@
     background: transparent;
     border: none;
     padding: 0;
+}
+
+.player-menu {
+    background-image: radial-gradient(#45423a, #312e26, #222120);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+    width: 70vw;
+    height: 100vh;
 }
 
 .null-music {
@@ -74,4 +76,8 @@
     white-space: nowrap;   /* disables line wrapping */
     overflow: hidden;      /* hide everything that doesn't fit */
     text-overflow: ellipsis; /* adds ... in the end */
+}
+
+.music-title {
+    color: white;
 }

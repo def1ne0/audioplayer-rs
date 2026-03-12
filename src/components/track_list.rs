@@ -25,7 +25,8 @@ pub fn TrackList(
                     TrackItem {
                         track: Track {
                             name: format!("{}. {}", i + 1, &track.name),
-                            path: track.path.clone()
+                            path: track.path.clone(),
+                            cover_src: track.cover_src.clone(),
                         },
                         is_selected: selected_track.read().as_ref()
                             .map(|t| t.path == track.path)

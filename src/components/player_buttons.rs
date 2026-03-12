@@ -18,10 +18,9 @@ pub fn PlayButton(
             },
             MusicState::Stopped => {
                 if let Some(track) = current_track.read().clone() {
-                    if let Some(path) = track.path.to_str() {
-                        handle_play(path.to_string());
-                        track_state.set(MusicState::Playing);
-                    }
+                    handle_play(track.path);
+                    track_state.set(MusicState::Playing);
+
                 }
             }
         }

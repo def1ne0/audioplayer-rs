@@ -3,12 +3,14 @@ mod load_image;
 mod audio_player;
 mod load_directory;
 mod track_list;
+mod handle_buttons;
 
 use std::sync::{Arc};
 use player_buttons::{PlayButton, NextButton, PreviousButton };
 use dioxus::prelude::*;
 use crate::components::audio_player::{Track, MusicState, AudioPlayer};
 use crate::components::track_list::TrackList;
+use handle_buttons::{handle_play, handle_pause, handle_track_select, handle_next, handle_previous};
 
 static MAIN_CSS: Asset = asset!("../../assets/main.css");
 
@@ -16,23 +18,15 @@ static MAIN_CSS: Asset = asset!("../../assets/main.css");
 pub fn App() -> Element {
     let track_ended_signal = use_signal(|| 0_usize);
 
-    let image_src = use_signal(|| String::new());
+    let mut image_src = use_signal(|| Option::<String>::None);
 
     let player = use_signal(|| Arc::new(AudioPlayer::try_new(track_ended_signal).expect("Error while2 creating audioplayer")));
 
     let tracks = use_signal(|| Vec::<Track>::new());
     let mut current_track = use_signal(|| Option::<Track>::None);
-    let mut track_state = use_signal(|| MusicState::Stopped);
+    let track_state = use_signal(|| MusicState::Stopped);
     let mut title = use_signal(|| String::new());
     let mut current_index = use_signal(|| 0_usize);
-
-    let handle_play = {
-        let player = player.clone();
-
-        move |path: String| {
-            player.read().play(&path);
-        }
-    };
 
     use_effect(move || {
         let count = *track_ended_signal.read();
@@ -56,54 +50,10 @@ pub fn App() -> Element {
             }
 
             title.set(all_tracks[idx].name.clone());
-            player.read().play(all_tracks[idx].path.to_str().unwrap());
+            image_src.set(all_tracks[idx].cover_src.clone());
+            player.read().play(&all_tracks[idx].path);
        });
     });
-
-    let handle_pause = {
-        let player = player.clone();
-
-        move || {
-            player.read().pause();
-        }
-    };
-
-    let mut handle_track_select = {
-        let player = player.clone();
-
-        move |track: Track| {
-            current_track.set(Some(track.clone()));
-            title.set(
-                current_track.read().as_ref()
-                    .map(|t| t.name.to_string())
-                    .unwrap_or(String::from("Unknown"))
-            );
-            current_index.set(tracks.read().iter().position(|t| *t == track).unwrap());
-            println!("selected idx: {}", current_index.read());
-            player.read().play(track.path.to_str().unwrap());
-            track_state.set(MusicState::Playing);
-        }
-    };
-
-    let handle_next = move || {
-        let all_tracks = tracks.read().clone();
-        let val = (*current_index.read() + 1) % all_tracks.len();
-        current_index.set(val);
-        handle_track_select(all_tracks[val].clone());
-    };
-
-    let handle_prev = move || {
-        let all_tracks = tracks.read().clone();
-        let curr_idx = *current_index.read();
-
-        let val = match curr_idx {
-            0 => all_tracks.len() - 1,
-            _ => curr_idx  - 1,
-        };
-
-        current_index.set(val);
-        handle_track_select(all_tracks[val].clone());
-    };
 
     rsx! {
         Stylesheet { href: MAIN_CSS },
@@ -114,22 +64,24 @@ pub fn App() -> Element {
             TrackList {
                 tracks,
                 selected_track: current_track,
-                on_select: handle_track_select,
+                on_select: move |track: Track| {
+                    handle_track_select(player, tracks, current_track, track_state, title, image_src, current_index, track);
+                },
             },
 
             div {
                 class: "player-menu",
 
-                if !image_src.read().is_empty() {
+                if let Some(src) = image_src.read().clone() {
                     img {
-                        src: image_src,
+                        src: src,
                         width: 200,
                         height: 200,
                     },
                 } else {
                     div {
                         class: "null-music",
-                    }
+                    },
                 },
 
                 input {
@@ -150,9 +102,18 @@ pub fn App() -> Element {
                 div {
                     class: "player-buttons-div",
 
-                    PreviousButton { handle_prev },
-                    PlayButton { current_track, track_state, handle_play, handle_pause },
-                    NextButton { handle_next },
+                    PreviousButton {
+                        handle_prev:handle_previous(player, tracks, current_track, track_state, title, image_src, current_index)
+                    },
+                    PlayButton {
+                        current_track,
+                        track_state,
+                        handle_play: handle_play(player),
+                        handle_pause: handle_pause(player)
+                    },
+                    NextButton {
+                        handle_next: handle_next(player, tracks, current_track, track_state, title, image_src, current_index)
+                    },
                 },
             }
         }

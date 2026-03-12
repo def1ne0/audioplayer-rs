@@ -1,4 +1,4 @@
-#![feature(fn_traits)]
+#![feature(unboxed_closures)]
 
 mod components;
 mod utilities;

@@ -1,6 +1,9 @@
 use std::fs;
+use base64::Engine;
+use base64::engine::general_purpose;
 use crate::components::audio_player::Track;
 use dioxus::prelude::*;
+use id3::{Tag};
 use rfd::AsyncFileDialog;
 
 pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
@@ -29,7 +32,9 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
                                    .unwrap_or("Unknown")
                                    .to_string();
 
-                               new_tracks.push(Track { path, name });
+                               let img_uri = read_mp3_metadata(&path.to_string_lossy());
+
+                               new_tracks.push(Track { path: path.to_string_lossy().to_string(), name, cover_src: img_uri });
                            }
                        }
                    }
@@ -40,4 +45,17 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
            tracks.set(new_tracks);
        }
     });
+}
+
+pub fn read_mp3_metadata(path: &str) -> Option<String> {
+    let mut cover_uri = None;
+
+    if let Ok(tag) = Tag::read_from_path(path) {
+        if let Some(picture) = tag.pictures().next() {
+            let base64_string = general_purpose::STANDARD.encode(&picture.data);
+            cover_uri = Some(format!("data:{};base64,{}", picture.mime_type, base64_string));
+        }
+    }
+
+    cover_uri
 }

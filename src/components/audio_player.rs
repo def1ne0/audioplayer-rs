@@ -20,7 +20,8 @@ pub struct AudioPlayer {
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct Track {
-    pub path: std::path::PathBuf,
+    pub cover_src: Option<String>,
+    pub path: String,
     pub name: String,
 }
 
