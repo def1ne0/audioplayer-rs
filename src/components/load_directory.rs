@@ -3,7 +3,7 @@ use base64::Engine;
 use base64::engine::general_purpose;
 use crate::components::audio_player::Track;
 use dioxus::prelude::*;
-use id3::{Tag};
+use id3::{Tag, TagLike};
 use rfd::AsyncFileDialog;
 
 pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
@@ -26,13 +26,15 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
                            .and_then(|e| e.to_str())
                        {
                            if ["mp3", "flac", "wav", "vorbis"].contains(&ext.to_lowercase().as_str()) {
-                               let name = path
+                               /* let name = path
                                    .file_stem()
                                    .and_then(|s| s.to_str())
                                    .unwrap_or("Unknown")
                                    .to_string();
 
-                               let img_uri = read_mp3_metadata(&path.to_string_lossy());
+                                */
+
+                               let (name, img_uri) = read_mp3_metadata(&path.to_string_lossy());
 
                                new_tracks.push(Track { path: path.to_string_lossy().to_string(), name, cover_src: img_uri });
                            }
@@ -47,15 +49,20 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
     });
 }
 
-pub fn read_mp3_metadata(path: &str) -> Option<String> {
-    let mut cover_uri = None;
+pub fn read_mp3_metadata(path: &str) -> (String, Option<String>) {
+    let mut track_title = String::new();
+    let mut cover_uri = Option::<String>::None;
 
     if let Ok(tag) = Tag::read_from_path(path) {
+        if let Some(title) = tag.title() {
+            track_title = title.to_string();
+        }
+
         if let Some(picture) = tag.pictures().next() {
             let base64_string = general_purpose::STANDARD.encode(&picture.data);
             cover_uri = Some(format!("data:{};base64,{}", picture.mime_type, base64_string));
         }
     }
 
-    cover_uri
+    (track_title, cover_uri)
 }
