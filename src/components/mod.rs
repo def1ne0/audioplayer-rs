@@ -25,7 +25,7 @@ pub fn App() -> Element {
     let tracks = use_signal(|| Vec::<Track>::new());
     let mut current_track = use_signal(|| Option::<Track>::None);
     let track_state = use_signal(|| MusicState::Stopped);
-    let mut title = use_signal(|| String::new());
+    let mut title = use_signal(|| String::from("Unknown"));
     let mut current_index = use_signal(|| 0_usize);
 
     use_effect(move || {

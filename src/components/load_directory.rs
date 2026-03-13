@@ -50,7 +50,7 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
 }
 
 pub fn read_mp3_metadata(path: &str) -> (String, Option<String>) {
-    let mut track_title = String::new();
+    let mut track_title = String::from("Unknown");
     let mut cover_uri = Option::<String>::None;
 
     if let Ok(tag) = Tag::read_from_path(path) {
