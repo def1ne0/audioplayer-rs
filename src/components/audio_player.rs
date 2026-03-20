@@ -15,7 +15,6 @@ pub struct AudioPlayer {
     _stream: OutputStream,
     sink: Arc<Mutex<Sink>>,
     on_track_end: Option<Signal<usize>>,
-
 }
 
 #[derive(Clone, PartialEq, Eq)]

@@ -12,7 +12,6 @@ use crate::components::audio_player::{Track, MusicState, AudioPlayer};
 use crate::components::track_list::TrackList;
 use handle_buttons::{handle_play, handle_pause, handle_track_select, handle_next, handle_previous};
 
-static MAIN_CSS: Asset = asset!("../../assets/main.css");
 
 #[component]
 pub fn App() -> Element {
@@ -56,7 +55,7 @@ pub fn App() -> Element {
     });
 
     rsx! {
-        Stylesheet { href: MAIN_CSS },
+        style { "{include_str!(\"../../assets/main.css\")}" },
 
         div {
             class: "main",

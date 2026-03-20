@@ -1,22 +1,11 @@
-#![feature(unboxed_closures)]
-
 mod components;
 mod utilities;
 
-use dioxus::desktop::{Config, WindowBuilder };
+use dioxus::desktop::{Config, WindowBuilder};
 use components::App;
 
 fn main() {
-    dioxus::LaunchBuilder::new()
-        .with_cfg(Config::default()
-            .with_window(
-                WindowBuilder::default()
-                    .with_decorations(false)
-                    .with_title("audioplayer")
-
-            )
-        )
-        .launch(App);
+    dioxus::LaunchBuilder::new().with_cfg(Config::default()).launch(App);
 }
 
 
