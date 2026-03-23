@@ -1,16 +1,12 @@
 mod player_buttons;
-mod load_image;
-mod audio_player;
-mod load_directory;
 mod track_list;
-mod handle_buttons;
 
-use std::sync::{Arc};
-use player_buttons::{PlayButton, NextButton, PreviousButton };
+use std::sync::Arc;
+use player_buttons::{NextButton, PlayButton, PreviousButton};
 use dioxus::prelude::*;
-use crate::components::audio_player::{Track, MusicState, AudioPlayer};
+use crate::player::{AudioPlayer, MusicState, Track};
 use crate::components::track_list::TrackList;
-use handle_buttons::{handle_play, handle_pause, handle_track_select, handle_next, handle_previous};
+use crate::handlers::{handle_next, handle_pause, handle_play, handle_previous, handle_track_select};
 
 
 #[component]

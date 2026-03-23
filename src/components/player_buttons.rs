@@ -1,4 +1,4 @@
-use crate::components::audio_player::{MusicState, Track};
+use crate::player::{MusicState, Track};
 use dioxus::prelude::*;
 
 #[component]

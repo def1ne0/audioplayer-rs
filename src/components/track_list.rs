@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
-use crate::components::audio_player::Track;
-use crate::components::load_directory::load_directory;
+use crate::player::Track;
+use crate::file_utils::load_directory;
 
 #[component]
 pub fn TrackList(

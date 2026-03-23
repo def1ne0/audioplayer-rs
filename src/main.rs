@@ -1,5 +1,7 @@
 mod components;
-mod utilities;
+pub mod file_utils;
+pub mod player;
+pub mod handlers;
 
 use dioxus::desktop::{Config};
 use components::App;

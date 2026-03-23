@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use std::sync::Arc;
-use crate::components::audio_player::{AudioPlayer, MusicState, Track};
+use crate::player::{AudioPlayer, MusicState, Track};
 
 pub fn handle_play(player: Signal<Arc<AudioPlayer>>) -> EventHandler<String> {
     EventHandler::new(
