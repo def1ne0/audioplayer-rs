@@ -34,7 +34,17 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
 
                                 */
 
-                               let (name, img_uri) = read_mp3_metadata(&path.to_string_lossy());
+                               let (title, img_uri) = read_mp3_metadata(&path.to_string_lossy());
+
+                               let name = match title {
+                                   Some(t) => t,
+                                   None => {
+                                       path.file_stem()
+                                           .and_then(|s| s.to_str())
+                                           .unwrap_or("Unknown")
+                                           .to_string()
+                                   },
+                               };
 
                                new_tracks.push(Track { path: path.to_string_lossy().to_string(), name, cover_src: img_uri });
                            }
@@ -49,13 +59,13 @@ pub fn load_directory(mut tracks: Signal<Vec<Track>>) {
     });
 }
 
-pub fn read_mp3_metadata(path: &str) -> (String, Option<String>) {
-    let mut track_title = String::from("Unknown");
+pub fn read_mp3_metadata(path: &str) -> (Option<String>, Option<String>) {
+    let mut track_title = Option::<String>::None;
     let mut cover_uri = Option::<String>::None;
 
     if let Ok(tag) = Tag::read_from_path(path) {
         if let Some(title) = tag.title() {
-            track_title = title.to_string();
+            track_title = Some(title.to_string());
         }
 
         if let Some(picture) = tag.pictures().next() {

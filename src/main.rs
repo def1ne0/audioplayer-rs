@@ -1,7 +1,7 @@
 mod components;
 mod utilities;
 
-use dioxus::desktop::{Config, WindowBuilder};
+use dioxus::desktop::{Config};
 use components::App;
 
 fn main() {
