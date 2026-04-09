@@ -26,25 +26,53 @@ pub fn PlayButton(
         }
     };
 
-    rsx! {
-        button {
-            class: "player-buttons",
+    match *track_state.read() {
+        MusicState::Playing => {
+            rsx! {
+                button {
+                    class: "player-buttons",
 
-            onclick: toggle_play,
+                    onclick: toggle_play,
 
-            svg {
-                xmlns: "http://www.w3.org/2000/svg",
-                width: "50",
-                height: "50",
-                view_box: "0 0 28 28",
+                    svg {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "50",
+                        height: "50",
+                        view_box: "0 0 48 48",
 
-                path {
-                    fill: "#FFFFFF",
-                    d: "M12.766 9.278a1.5 1.5 0 0 0-2.266 1.29v6.864a1.5 1.5 0 0 0 2.266 1.29l6.505-3.862a1 1 0 0 0 0-1.72l-6.505-3.862ZM2 14C2 7.373 7.373 2 14 2s12 5.373 12 12s-5.373 12-12 12S2 20.627 2 14ZM14 3.5C8.201 3.5 3.5 8.201 3.5 14S8.201 24.5 14 24.5S24.5 19.799 24.5 14S19.799 3.5 14 3.5Z",
+                        path {
+                            fill: "#FFFFFF",
+                            d: "M11.75 6A3.75 3.75 0 0 0 8 9.75v28.5A3.75 3.75 0 0 0 11.75 42h6.5A3.75 3.75 0 0 0 22 38.25V9.75A3.75 3.75 0 0 0 18.25 6zm18 0A3.75 3.75 0 0 0 26 9.75v28.5A3.75 3.75 0 0 0 29.75 42h6.5A3.75 3.75 0 0 0 40 38.25V9.75A3.75 3.75 0 0 0 36.25 6z",
+                        }
+                    }
+                }
+            }
+        },
+        MusicState::Stopped => {
+            rsx! {
+                button {
+                    class: "player-buttons",
+
+                    onclick: toggle_play,
+
+                    svg {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "50",
+                        height: "50",
+                        view_box: "0 0 28 28",
+
+                        path {
+                            fill: "#FFFFFF",
+                            d: "M12.766 9.278a1.5 1.5 0 0 0-2.266 1.29v6.864a1.5 1.5 0 0 0 2.266 1.29l6.505-3.862a1 1 0 0 0 0-1.72l-6.505-3.862ZM2 14C2 7.373 7.373 2 14 2s12 5.373 12 12s-5.373 12-12 12S2 20.627 2 14ZM14 3.5C8.201 3.5 3.5 8.201 3.5 14S8.201 24.5 14 24.5S24.5 19.799 24.5 14S19.799 3.5 14 3.5Z",
+                        }
+                    }
                 }
             }
         }
     }
+
+
+
 }
 
 #[component]
