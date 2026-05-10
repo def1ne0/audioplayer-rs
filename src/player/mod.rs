@@ -39,7 +39,7 @@ impl AudioPlayer {
 
     pub fn play(&self, curr_path: &str) {
         let sink_lock = self.sink.clone();
-        let signal_opt = self.on_track_end.clone();
+        let signal_opt = self.on_track_end;
 
         if let Ok(sink) = sink_lock.lock() {
             sink.stop();

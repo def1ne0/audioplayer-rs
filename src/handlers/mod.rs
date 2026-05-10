@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
-use std::sync::Arc;
+use std::rc::Rc;
 use crate::player::{AudioPlayer, MusicState, Track};
 
-pub fn handle_play(player: Signal<Arc<AudioPlayer>>) -> EventHandler<String> {
+pub fn handle_play(player: Signal<Rc<AudioPlayer>>) -> EventHandler<String> {
     EventHandler::new(
         move |path: String| {
             player.read().play(&path);
@@ -10,14 +10,19 @@ pub fn handle_play(player: Signal<Arc<AudioPlayer>>) -> EventHandler<String> {
     )
 }
 
-pub fn handle_pause(player: Signal<Arc<AudioPlayer>>) -> impl Fn() + 'static {
+pub fn handle_pause(player: Signal<Rc<AudioPlayer>>) -> impl Fn() + 'static {
     move || {
         player.read().pause();
     }
 }
 
+// TODO: need to refactor this function.
+// maybe create struct AudioPlayerContext
+// and now we just ignore clippy
+
+#[allow(clippy::too_many_arguments)]
 pub fn handle_track_select(
-    player: Signal<Arc<AudioPlayer>>,
+    player: Signal<Rc<AudioPlayer>>,
     tracks: Signal<Vec<Track>>,
     mut current_track: Signal<Option<Track>>,
     mut track_state: Signal<MusicState>,
@@ -37,7 +42,7 @@ pub fn handle_track_select(
 }
 
 pub fn handle_next(
-    player: Signal<Arc<AudioPlayer>>,
+    player: Signal<Rc<AudioPlayer>>,
     tracks: Signal<Vec<Track>>,
     current_track: Signal<Option<Track>>,
     track_state: Signal<MusicState>,
@@ -54,7 +59,7 @@ pub fn handle_next(
 }
 
 pub fn handle_previous(
-    player: Signal<Arc<AudioPlayer>>,
+    player: Signal<Rc<AudioPlayer>>,
     tracks: Signal<Vec<Track>>,
     current_track: Signal<Option<Track>>,
     track_state: Signal<MusicState>,

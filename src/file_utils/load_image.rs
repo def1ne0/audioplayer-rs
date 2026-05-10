@@ -12,7 +12,7 @@ pub fn load_image(mut image_src: Signal<String>) -> impl FnMut(MouseEvent) + 'st
                 .pick_file()
                 .await
             {
-                if let Ok(bytes) = fs::read(&file.path()) {
+                if let Ok(bytes) = fs::read(file.path()) {
                     let base64_data = general_purpose::STANDARD.encode(&bytes);
 
                     let mime_type = match file.path().extension().and_then(|e| e.to_str()) {

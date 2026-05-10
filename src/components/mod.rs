@@ -1,7 +1,7 @@
 mod player_buttons;
 mod track_list;
 
-use std::sync::Arc;
+use std::rc::Rc;
 use player_buttons::{NextButton, PlayButton, PreviousButton};
 use dioxus::prelude::*;
 use crate::player::{AudioPlayer, MusicState, Track};
@@ -15,9 +15,9 @@ pub fn App() -> Element {
 
     let mut image_src = use_signal(|| Option::<String>::None);
 
-    let player = use_signal(|| Arc::new(AudioPlayer::try_new(track_ended_signal).expect("Error while2 creating audioplayer")));
+    let player = use_signal(|| Rc::new(AudioPlayer::try_new(track_ended_signal).expect("Error while2 creating audioplayer")));
 
-    let tracks = use_signal(|| Vec::<Track>::new());
+    let tracks = use_signal(Vec::<Track>::new);
     let mut current_track = use_signal(|| Option::<Track>::None);
     let track_state = use_signal(|| MusicState::Stopped);
     let mut title = use_signal(|| String::from("Unknown"));
@@ -31,7 +31,7 @@ pub fn App() -> Element {
         };
 
         spawn(async move {
-            let mut idx = current_index.read().clone();
+            let mut idx = *current_index.read();
             let all_tracks = tracks.read().clone();
 
             idx = (idx + 1) % all_tracks.len();
