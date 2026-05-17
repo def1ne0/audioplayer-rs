@@ -1,7 +1,7 @@
 use std::fs;
 use base64::Engine;
 use base64::engine::general_purpose;
-use crate::player::Track;
+use crate::player::track::Track;
 use dioxus::prelude::*;
 use id3::{Tag, TagLike};
 use rfd::AsyncFileDialog;

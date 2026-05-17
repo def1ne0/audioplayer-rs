@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::player::Track;
+use crate::player::track::Track;
 use crate::file_utils::load_directory;
 
 #[component]

@@ -1,3 +1,6 @@
+pub mod track;
+pub mod player_context;
+
 use std::fs::File;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -15,13 +18,6 @@ pub struct AudioPlayer {
     _stream: OutputStream,
     sink: Arc<Mutex<Sink>>,
     on_track_end: Option<Signal<usize>>,
-}
-
-#[derive(Clone, PartialEq, Eq)]
-pub struct Track {
-    pub cover_src: Option<String>,
-    pub path: String,
-    pub name: String,
 }
 
 impl AudioPlayer {
