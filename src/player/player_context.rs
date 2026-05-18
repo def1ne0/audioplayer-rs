@@ -4,7 +4,7 @@ use crate::player::{AudioPlayer, MusicState};
 use crate::player::track::Track;
 
 #[derive(Clone, Copy)]
-pub struct PlayerContext {
+pub struct PlaylistContext {
     pub player: Signal<Rc<AudioPlayer>>,
     pub tracks: Signal<Vec<Track>>,
     pub current_track: Signal<Option<Track>>,
@@ -14,8 +14,7 @@ pub struct PlayerContext {
     pub current_index: Signal<usize>,
 }
 
-impl PlayerContext {
-
+impl PlaylistContext {
     // Our main private function to set some states of components,
     // if user has selected the song.
     fn apply_track_select(
@@ -94,7 +93,7 @@ impl PlayerContext {
         let mut ctx = *self;
         
         move || {
-            let all_tracks = ctx.tracks.read().clone();
+            let all_tracks = ctx.tracks.read().cloned();
             let curr_idx = *ctx.current_index.read();
 
             let val = match curr_idx {
@@ -104,6 +103,21 @@ impl PlayerContext {
 
             ctx.current_index.set(val);
             ctx.apply_track_select(&all_tracks[val]);
+        }
+    }
+
+    // Handles the volume of song changed and returns the closure
+    // to oninput attribute of the input range.
+    pub fn on_volume_changed(&self) -> impl FnMut(Event<FormData>) + 'static {
+        let ctx = *self;
+
+        move |event: Event<FormData>| {
+            if let Ok(new_val) = event.value().parse::<f32>() {
+                ctx.player.read().set_volume(new_val);
+
+                #[cfg(debug_assertions)]
+                println!("new volume: {}", new_val);
+            }
         }
     }
 }

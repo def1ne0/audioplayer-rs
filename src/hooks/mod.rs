@@ -1,8 +1,8 @@
 use dioxus::prelude::*;
-use crate::player::player_context::PlayerContext;
+use crate::player::player_context::PlaylistContext;
 
 // When the track is ended, it accepts the signal and plays the next track.
-pub fn use_track_autoplay(mut ctx: PlayerContext, ended_signal: Signal<usize>) {
+pub fn use_track_autoplay(mut ctx: PlaylistContext, ended_signal: Signal<usize>) {
     use_effect(move || {
         let count = *ended_signal.read();
 
@@ -30,5 +30,4 @@ pub fn use_track_autoplay(mut ctx: PlayerContext, ended_signal: Signal<usize>) {
             ctx.player.read().play(&all_tracks[idx].path);
         });
     });
-
 }

@@ -16,12 +16,13 @@
     background-image: linear-gradient(#222120);
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
     width: 30vw;
     height: 100vh;
     justify-content: center;
     align-items: center;
     gap: 5px;
-    padding: 5px;
+    padding: 5px 20px 5px 5px;
 }
 
 

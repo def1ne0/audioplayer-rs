@@ -73,4 +73,10 @@ impl AudioPlayer {
             sink.pause();
         }
     }
+    
+    pub fn set_volume(&self, new_volume: f32) {
+        if let Ok(sink) = self.sink.lock() {
+            sink.set_volume(new_volume);
+        }
+    }
 }
